@@ -6,9 +6,11 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 
+from utils.functions import create_slug, try_catch
 
 class Browser:
     INSTAGRAM_HOST_DOWNLOADER = "https://snapinst.app/"
+    TIKTOK_HOST_DOWNLOADER = "https://snaptik.app/"
 
     def __init__(self):
         options = webdriver.ChromeOptions()
@@ -36,5 +38,40 @@ class Browser:
         
         return {
             "url": mediaUrl,
-            "title": time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()),
+            "filaname": time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()),
+        }
+    
+    def tiktok_downloader (self, url) -> dict:
+        MODAL_CLOSE_SELECTOR = ".modal-close"
+        ADS_BOX_SELECTOR = "#ad_position_box #dismiss-button"
+        INPUT_SELECTOR = "input#url"
+        BUTTON_SUBMIT_SELECTOR = "button[type='submit']"
+        ANCHOR_DOWNLOAD_SELECTOR = "a.button.download-file"
+        POST_TITLE_SELECTOR = ".info .video-title"
+
+        mediaUrl = None
+        filename = None
+
+        self.driver = webdriver.Chrome(options=self.options)
+        self.driver.get(self.TIKTOK_HOST_DOWNLOADER)
+
+        while True:
+            try:
+                try_catch(lambda: self.driver.find_element(By.CSS_SELECTOR, MODAL_CLOSE_SELECTOR).click())
+                try_catch(lambda: self.driver.find_element(By.CSS_SELECTOR, ADS_BOX_SELECTOR).click())
+
+                self.driver.find_element(By.CSS_SELECTOR, INPUT_SELECTOR).send_keys(url)
+                self.driver.find_element(By.CSS_SELECTOR, BUTTON_SUBMIT_SELECTOR).click()
+                
+                self.driver.implicitly_wait(3)
+
+                mediaUrl = self.driver.find_element(By.CSS_SELECTOR, ANCHOR_DOWNLOAD_SELECTOR).get_attribute("href")
+                filename = create_slug(self.driver.find_element(By.CSS_SELECTOR, POST_TITLE_SELECTOR).text)
+                self.driver.quit()
+                break
+            except Exception as err:
+                print (f"[{ Browser.__class__.__name__ }]: { err }")
+        return {
+            "url": mediaUrl,
+            "filename": filename
         }

@@ -70,3 +70,22 @@ def get_file_extension_from_bytes(file_bytes):
     
     # If none of the above match, return a generic file extension
     return 'bin'
+
+def try_catch (function):
+    try:
+        function()
+    except Exception as err:
+        pass
+
+# def cache_request (url):
+#     path = "./.cache/"
+
+#     if not os.path.exists(path):
+#         os.makedirs(path)
+    
+#     hashedUrl = hash.sha256(url.encode("utf-8")).hexdigest()
+#     if not os.path.exists(f"{path}/{hashedUrl}.json"):
+#         with open(f"{path}/{hashedUrl}.cache", "w") as file:
+#             file.write(result)
+#             file.close()
+#         return response

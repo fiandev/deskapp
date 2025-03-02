@@ -1,6 +1,6 @@
-import re, requests, os
+import re, requests, os, sys
 from lib.Browser import Browser
-from utils.functions import create_slug, get_file_extension_from_bytes
+from utils.functions import get_file_extension_from_bytes
 
 class Socialist (Browser):
     def __init__(self, pathDestination = "./results"):
@@ -15,11 +15,10 @@ class Socialist (Browser):
             "twitter": r"(https?:\/\/)?(www\.)?twitter\.com\/(.+)",
             "facebook": r"(https?:\/\/)?(www\.)?facebook\.com\/(.+)",
             "linkedin": r"(https?:\/\/)?(www\.)?linkedin\.com\/(.+)",
-            "tiktok": r"(https?:\/\/)?(www\.)?tiktok\.com\/(.+)",
+            "tiktok": r"(https?:\/\/)?(vt|www)?\.?tiktok\.com\/(.+)",
         }
     def get_platform(self, url):
         for platform, pattern in self.validations.items():
-            print (platform, pattern)
             if re.match(pattern, url):
                 return platform
     
@@ -33,19 +32,44 @@ class Socialist (Browser):
                 return "twitter.com"
             case "facebook":
                 return "facebook.com"
+            case "tiktok":
+                return self.tiktok_downloader(url)
     
     def download (self, url):
         media = self.get_media(url)
 
+        print (media)
         try:
-            byteContent = requests.get(media["url"]).content
-            filename = create_slug(media["title"])
+            response = requests.get(media["url"], stream=True)
+            byteContent = response.content
+            filename = media["filename"]
             extension = get_file_extension_from_bytes(byteContent)
+            totalSize = int(response.headers.get("content-length"))
+            
+            with open(f"{self.pathDestination}/{filename}.{extension}", "wb") as file:
+                # Initialize progress bar variables
+                chunk_size = 1024  # 1 KB per chunk
+                downloaded_size = 0
 
-            with open (f"{ self.pathDestination }/{filename}.{extension}", "wb") as file:
-                file.write(byteContent)
-                file.close()
+                print(f"Downloading {filename}.{extension}...")
+
+                # Download the file in chunks and show the progress
+                for chunk in response.iter_content(chunk_size=chunk_size):
+                    if chunk:
+                        file.write(chunk)
+                        downloaded_size += len(chunk)
+                        
+                        # Calculate progress percentage
+                        percent = (downloaded_size / totalSize) * 100
+
+                        # Print the progress bar
+                        bar = '=' * int(percent // 2)  # 50 characters width bar
+                        spaces = ' ' * (50 - len(bar))
+                        sys.stdout.write(f"\r[{bar}{spaces}] {percent:.2f}%")
+                        sys.stdout.flush()
+
+                print(f"\nDownload complete: {self.pathDestination}/{filename}.{extension}")
             print (f"media saved to { self.pathDestination }/{filename}")
         except Exception as err:
             print (err)
-            print (f"failed downloading media with url: { url }")
+            print (f"[{ self.__class__.__name__ }] failed downloading media with url: { url }")
