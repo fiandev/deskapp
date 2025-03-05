@@ -4,7 +4,7 @@ from tkinter import ttk
 from app.pages.DownloaderPage import DownloaderPage
 from app.pages.Homepage import HomePage
 from app.pages.SocialMediaDownlaoder import SocialMediaDownloader
-
+from app.pages.BitcoinWalletPage import BitcoinWalletPage
 
 class Desktop(tk.Tk):
     def __init__(self):
@@ -51,7 +51,7 @@ class Desktop(tk.Tk):
     
     def create_pages(self):
         # Create additional pages
-        for page_class in [DownloaderPage, SocialMediaDownloader]:
+        for page_class in [DownloaderPage, SocialMediaDownloader, BitcoinWalletPage]:
             page = page_class(parent=self.container, controller=self)
             self.frames[page_class.__name__] = page
             page.grid(row=0, column=0, sticky="nsew")

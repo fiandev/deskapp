@@ -29,6 +29,7 @@ class HomePage(tk.Frame):
         # List of page names and their descriptions
         pages = [
             ("Sosial Media Downloader", "universal downloder for social media", "SocialMediaDownloader"),
+            ("Bitcoin Wallet", "a bitcoin self custody btc wallet", "BitcoinWalletPage"),
         ]
         
         # Create a button for each page

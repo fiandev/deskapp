@@ -1,6 +1,7 @@
 # ignore generated folders
 /test
 /results
+/.*
 
 # Ignore Python cache files
 __pycache__/

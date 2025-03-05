@@ -73,8 +73,8 @@ class SocialMediaDownloader(tk.Frame):
         results_header.pack(fill="x", pady=(0, 10))
         
         results_title = tk.Label(results_header, text="Download History", 
-                                font=("Helvetica", 14, "bold"),
-                                bg=controller.bg_color, fg=controller.text_color)
+                            font=("Helvetica", 14, "bold"),
+                            bg=controller.bg_color, fg=controller.text_color)
         results_title.pack(anchor="w")
         
         # Create a scrollable frame for the download list
@@ -106,12 +106,12 @@ class SocialMediaDownloader(tk.Frame):
         back_frame.pack(fill="x")
         
         back_button = tk.Button(back_frame, text="Back to Main Menu", 
-                                font=("Helvetica", 11),
-                                bg="#f0f0f0", fg=controller.text_color,
-                                activebackground="#e0e0e0",
-                                activeforeground=controller.text_color, 
-                                relief="flat", padx=10, pady=5,
-                                command=lambda: controller.show_frame("HomePage"))
+                            font=("Helvetica", 11),
+                            bg="#f0f0f0", fg=controller.text_color,
+                            activebackground="#e0e0e0",
+                            activeforeground=controller.text_color, 
+                            relief="flat", padx=10, pady=5,
+                            command=lambda: controller.show_frame("HomePage"))
         back_button.pack(side="left")
         self.histories = self.load_history()
     
@@ -153,7 +153,7 @@ class SocialMediaDownloader(tk.Frame):
         """Create a new download item in the list"""
         # Create a frame for the item
         item_frame = tk.Frame(self.scroll_frame, bg="white", padx=15, pady=15,
-                                highlightbackground="#e0e0e0", highlightthickness=1)
+                            highlightbackground="#e0e0e0", highlightthickness=1)
         item_frame.pack(fill="x", pady=5, padx=5)
         
         # Left side - video details
@@ -162,8 +162,8 @@ class SocialMediaDownloader(tk.Frame):
         
         # Title
         title_label = tk.Label(details_frame, text=title, font=("Helvetica", 12, "bold"),
-                                bg="white", fg=self.controller.text_color, 
-                                anchor="w")
+                            bg="white", fg=self.controller.text_color, 
+                            anchor="w")
         title_label.pack(fill="x", anchor="w")
         
         # URL (truncated if too long)
@@ -178,17 +178,17 @@ class SocialMediaDownloader(tk.Frame):
         
         if status == "pending":
             download_button = tk.Label(button_frame, text="Processing...", 
-                                font=("Helvetica", 10),
-                                bg="#f0f0f0", fg="#666666",
-                                padx=10, pady=5)
+                            font=("Helvetica", 10),
+                            bg="#f0f0f0", fg="#666666",
+                            padx=10, pady=5)
         else:
             download_button = tk.Button(button_frame, text="Download", 
-                                font=("Helvetica", 10),
-                                bg=self.controller.button_color, fg="white",
-                                activebackground=self.controller.hover_color,
-                                activeforeground="white", relief="flat",
-                                padx=10, pady=5,
-                                command=lambda: self.download_file(media))
+                            font=("Helvetica", 10),
+                            bg=self.controller.button_color, fg="white",
+                            activebackground=self.controller.hover_color,
+                            activeforeground="white", relief="flat",
+                            padx=10, pady=5,
+                            command=lambda: self.download_file(media))
         
         download_button.pack()
         
@@ -207,12 +207,12 @@ class SocialMediaDownloader(tk.Frame):
             item_frame.download_button.destroy()
             
             download_button = tk.Button(item_frame.download_button.master, text="Download", 
-                                font=("Helvetica", 10),
-                                bg=self.controller.button_color, fg="white",
-                                activebackground=self.controller.hover_color,
-                                activeforeground="white", relief="flat",
-                                padx=10, pady=5,
-                                command=lambda: self.download_file(media))
+                            font=("Helvetica", 10),
+                            bg=self.controller.button_color, fg="white",
+                            activebackground=self.controller.hover_color,
+                            activeforeground="white", relief="flat",
+                            padx=10, pady=5,
+                            command=lambda: self.download_file(media))
             download_button.pack()
             self.save_history(media)
             item_frame.download_button = download_button
@@ -283,7 +283,3 @@ class SocialMediaDownloader(tk.Frame):
             page = page_class(parent=self.container, controller=self)
             self.frames[page_class.__name__] = page
             page.grid(row=0, column=0, sticky="nsew")
-
-# Update your MainPage class to add a button for the downloader
-# In the MainPage.__init__ method, update the pages list to add:
-# ("Social Media Downloader", "Download content from social networks", "SocialMediaDownloader")
