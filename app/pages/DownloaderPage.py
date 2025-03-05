@@ -7,8 +7,8 @@ class DownloaderPage(tk.Frame):
         super().__init__(parent, bg="#ecf0f1")
         
         # Input Form
-        self.entry_label = ttk.Label(self, text="Enter something:")
-        self.entry_label.pack(pady=5)
+        self.entry_label = ttk.Label(self, text="Sosial Media Downlaoder")
+        # self.entry_label.pack(pady=5)
         
         self.entry = ttk.Entry(self, width=30)
         self.entry.pack(pady=5)

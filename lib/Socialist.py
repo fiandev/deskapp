@@ -1,9 +1,20 @@
 import re, requests, os, sys
 from lib.Browser import Browser
 from utils.functions import get_file_extension_from_bytes
+from utils.env import env
 
 class Socialist (Browser):
     def __init__(self, pathDestination = "./results"):
+        """
+        Initialize a new instance of the Socialist class.
+
+        The pathDestination parameter defaults to "./results", and is used to specify the directory
+        where the downloaded media will be saved.
+
+        The validations dictionary contains regular expressions that match URLs from various social media
+        platforms. The keys of the dictionary are the names of the platforms, and the values are the regular
+        expressions that match URLs from those platforms.
+        """
         super().__init__()
 
         if not os.path.exists(pathDestination):
@@ -35,14 +46,11 @@ class Socialist (Browser):
             case "tiktok":
                 return self.tiktok_downloader(url)
     
-    def download (self, url):
-        media = self.get_media(url)
-
-        print (media)
+    def download (self, media):
         try:
             response = requests.get(media["url"], stream=True)
             byteContent = response.content
-            filename = media["filename"]
+            filename = media["filename"][0:12]
             extension = get_file_extension_from_bytes(byteContent)
             totalSize = int(response.headers.get("content-length"))
             
@@ -71,5 +79,6 @@ class Socialist (Browser):
                 print(f"\nDownload complete: {self.pathDestination}/{filename}.{extension}")
             print (f"media saved to { self.pathDestination }/{filename}")
         except Exception as err:
-            print (err)
-            print (f"[{ self.__class__.__name__ }] failed downloading media with url: { url }")
+            if not env("APP_ENV") == "production":
+                print (f"[{ self.__class__.__name__ }] failed downloading media with url: { media['url'] }")
+                raise err

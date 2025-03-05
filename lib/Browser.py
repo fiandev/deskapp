@@ -6,6 +6,7 @@ from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.proxy import Proxy, ProxyType
 
+from utils.env import env
 from utils.functions import create_slug, try_catch
 
 class Browser:
@@ -16,29 +17,36 @@ class Browser:
         options = webdriver.ChromeOptions()
         options.add_argument('--no-sandbox')
         options.add_argument('--disable-dev-shm-usage')
+        # options.add_argument("--headless=true")
         options.add_argument('--disable-blink-features=AutomationControlled')
 
         self.options = options
         self.driver = None
     
     def instagram_downloader (self, url) -> dict:
+        mediaUrl = None
         
         self.driver = webdriver.Chrome(options=self.options)
         self.driver.get(self.INSTAGRAM_HOST_DOWNLOADER)
         
-        WebDriverWait(self.driver, timeout=3000).until(EC.presence_of_element_located((By.CSS_SELECTOR, "form[name='formurl'] #url")))
-        
-        self.driver.find_element(By.CSS_SELECTOR, "form[name='formurl'] #url").send_keys(url)
-        self.driver.find_element(By.CSS_SELECTOR, "form[name='formurl'] #btn-submit").click()
+        while True:
+            try:
+                # WebDriverWait(self.driver, timeout=3000).until(EC.presence_of_element_located((By.CSS_SELECTOR, "form[name='formurl'] #url")))
+                
+                self.driver.find_element(By.CSS_SELECTOR, "form[name='formurl'] #url").send_keys(url)
+                self.driver.find_element(By.CSS_SELECTOR, "form[name='formurl'] #btn-submit").click()
 
-        WebDriverWait(self.driver, timeout=3000).until(EC.presence_of_element_located((By.CSS_SELECTOR, "button#close-modal"))).click
-        WebDriverWait(self.driver, timeout=3000).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".download-bottom a")))
-        
-        mediaUrl = self.driver.find_element(By.CSS_SELECTOR, ".download-bottom a").get_attribute("href")
-        
+                WebDriverWait(self.driver, timeout=3000).until(EC.presence_of_element_located((By.CSS_SELECTOR, "button#close-modal"))).click()
+                WebDriverWait(self.driver, timeout=3000).until(EC.presence_of_element_located((By.CSS_SELECTOR, ".download-bottom a")))
+                
+                mediaUrl = self.driver.find_element(By.CSS_SELECTOR, ".download-bottom a").get_attribute("href")
+                self.driver.quit()
+                break
+            except Exception as err:
+                print (err)
         return {
             "url": mediaUrl,
-            "filaname": time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()),
+            "filename": time.strftime("%Y-%m-%d-%H-%M-%S", time.localtime()),
         }
     
     def tiktok_downloader (self, url) -> dict:
@@ -70,7 +78,9 @@ class Browser:
                 self.driver.quit()
                 break
             except Exception as err:
-                print (f"[{ Browser.__class__.__name__ }]: { err }")
+                if not env ("APP_ENV") == "production":
+                    print (f"[{ Browser.__class__.__name__ }]: { err }")
+                    raise err
         return {
             "url": mediaUrl,
             "filename": filename
