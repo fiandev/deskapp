@@ -42,7 +42,7 @@ class Socialist (Browser):
             case "twitter":
                 return "twitter.com"
             case "facebook":
-                return "facebook.com"
+                return self.facebook_downloader(url)
             case "tiktok":
                 return self.tiktok_downloader(url)
     
